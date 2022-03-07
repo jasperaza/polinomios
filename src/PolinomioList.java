@@ -92,7 +92,7 @@ public class PolinomioList {
             resultado.insertar(node);
             bnext = bnext.siguiente;
         }
-        // q polinomio tiene estadísticas completas
+        
         return resultado;
     }
 
