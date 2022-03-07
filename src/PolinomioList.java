@@ -54,7 +54,7 @@ public class PolinomioList {
         return pl.substring(0, pl.length() - 2);
     }
 
-    /*adición*/
+ 
     public static PolinomioList sumar(PolinomioList a, PolinomioList b) {
         MoNodo anext = a.inicio.siguiente;
         MoNodo bnext = b.inicio.siguiente;
