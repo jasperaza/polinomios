@@ -70,7 +70,7 @@ public class Nodo {
             if(coeficiente==1){
                 formato="x^"+exponente;
             }else if(coeficiente==-1){
-                formato="-x"+exponente;
+                formato="-x^"+exponente;
             }else{
                 formato=coeficiente+"x^"+exponente;
             }

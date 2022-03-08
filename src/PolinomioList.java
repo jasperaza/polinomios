@@ -110,7 +110,9 @@ public class PolinomioList {
             qnext = qnext.getSiguiente();
             pnext = this.primero;
         }
+        resultado.imprimir();
         // Fusión de elementos similares 
+        /*
         Nodo current = resultado.primero;
         Nodo preCurrent = resultado.primero.getAnterior();
 
@@ -132,7 +134,7 @@ public class PolinomioList {
             current = current.getSiguiente();
 
         }
-
+            */
         return resultado;
     }
     
@@ -160,5 +162,6 @@ public class PolinomioList {
         
         return result;
     }
+    
 
 }
