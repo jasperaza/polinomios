@@ -9,55 +9,53 @@
  */
 public class PolinomioList {
 
-    MoNodo inicio;
-    MoNodo actual;
+    private Nodo primero;
+    private Nodo ultimo;
+    private int grado;
 
     public PolinomioList() {
-        inicio = new MoNodo();
-        actual = inicio;
-        inicio.siguiente = null;
+        primero=ultimo=null;
+        grado=0;
     }
 
     public boolean esVacio() {
-        return inicio.siguiente == null;
+        return primero == null&&ultimo==null;
     }
 
-    public void insertar(MoNodo nodo) {
-        actual.siguiente = nodo;
-        actual = nodo;
+    public void insertar(Nodo nodo) {
+        if(esVacio()){
+            primero=ultimo=nodo;
+        }else{
+            ultimo.setSiguiente(nodo);
+            nodo.setAnterior(ultimo);
+            ultimo=nodo;
+        }
+        
+        
     }
 
     public String imprimir() {
-        StringBuilder pl = new StringBuilder();
-        MoNodo nodo = inicio.siguiente;
-        while (nodo != null) {
-            switch (nodo.getExponente()) {
-                case 0 -> {
-                    pl.append(nodo.getCoeficiente());
-                    pl.append(" + ");
-                    break;
-                }
-                case 1 -> {
-                    pl.append(nodo.getCoeficiente()).append("x");
-                    pl.append(" + ");
-                    break;
-                }
-                default -> {
-                    pl.append(nodo.getCoeficiente()).append("x^").append(nodo.getExponente());
-                    pl.append(" + ");
-                    break;
-                }
-            }
-
-            nodo = nodo.siguiente;
+        String formato="";
+        
+        for(Nodo i=primero;i!=null;i=i.getSiguiente()){
+           if(i==primero){
+               formato=i.toString();
+           }else{
+               if(i.getCoeficiente()<0){
+                   formato+=i.toString();
+               }else{
+                   formato+="+"+i.toString();
+               }
+           }
         }
-        return pl.substring(0, pl.length() - 2);
+        
+        return formato;
     }
 
  
-    public static PolinomioList sumar(PolinomioList a, PolinomioList b) {
-        MoNodo anext = a.inicio.siguiente;
-        MoNodo bnext = b.inicio.siguiente;
+    public  PolinomioList sumar(PolinomioList b) {
+        Nodo anext = this.primero;
+        Nodo bnext = b.primero;
         PolinomioList resultado = new PolinomioList();
         while (anext != null && bnext != null) {
             int aindex = anext.getExponente();
@@ -66,39 +64,39 @@ public class PolinomioList {
             int bcoef = bnext.getCoeficiente();
             if (aindex == bindex) {
                 if (acoef + bcoef != 0) {
-                    MoNodo node = new MoNodo(acoef + bcoef, aindex);
+                    Nodo node = new Nodo(acoef + bcoef, aindex);
                     resultado.insertar(node);
                 }
-                anext = anext.siguiente;
-                bnext = bnext.siguiente;
+                anext = anext.getSiguiente();
+                bnext = bnext.getSiguiente();
             } else if (aindex < bindex) {
-                MoNodo node = new MoNodo(anext.getCoeficiente(), anext.getExponente());
+                Nodo node = new Nodo(anext.getCoeficiente(), anext.getExponente());
                 resultado.insertar(node);
-                anext = anext.siguiente;
+                anext = anext.getSiguiente();
             } else {
-                MoNodo node = new MoNodo(bnext.getCoeficiente(), bnext.getExponente());
+                Nodo node = new Nodo(bnext.getCoeficiente(), bnext.getExponente());
                 resultado.insertar(node);
-                bnext = bnext.siguiente;
+                bnext = bnext.getSiguiente();
             }
         }
         while (anext != null) {
-            MoNodo node = new MoNodo(anext.getCoeficiente(), bnext.getExponente());
+            Nodo node = new Nodo(anext.getCoeficiente(), bnext.getExponente());
             resultado.insertar(node);
-            anext = anext.siguiente;
+            anext = anext.getSiguiente();;
         }
         // p polinomio ha completado estadísticas
         while (bnext != null) {
-            MoNodo node = new MoNodo(bnext.getCoeficiente(), bnext.getExponente());
+            Nodo node = new Nodo(bnext.getCoeficiente(), bnext.getExponente());
             resultado.insertar(node);
-            bnext = bnext.siguiente;
+            bnext = bnext.getSiguiente();;
         }
         
         return resultado;
     }
 
     public  PolinomioList multiplicar( PolinomioList q) {
-        MoNodo pnext = this.inicio.siguiente;
-        MoNodo qnext = q.inicio.siguiente;
+        Nodo pnext = this.primero;
+        Nodo qnext = q.primero;
         PolinomioList resultado = new PolinomioList();
         int coef;
         int index;
@@ -106,32 +104,32 @@ public class PolinomioList {
             while (pnext != null) {
                 coef = pnext.getCoeficiente() * qnext.getCoeficiente();
                 index = pnext.getExponente() + qnext.getExponente();
-                resultado.insertar(new MoNodo(coef, index));
-                pnext = pnext.siguiente;
+                resultado.insertar(new Nodo(coef, index));
+                pnext = pnext.getSiguiente();
             }
-            qnext = qnext.siguiente;
-            pnext = this.inicio.siguiente;
+            qnext = qnext.getSiguiente();
+            pnext = this.primero;
         }
         // Fusión de elementos similares 
-        MoNodo current = resultado.inicio.siguiente;
-        MoNodo preCurrent = resultado.inicio;
+        Nodo current = resultado.primero;
+        Nodo preCurrent = resultado.primero.getAnterior();
 
         while (current != null) {
-            MoNodo nextNode = current.siguiente; // El siguiente nodo del nodo actual en la lista de resultados
+            Nodo nextNode = current.getSiguiente(); // El siguiente nodo del nodo actual en la lista de resultados
             while (nextNode != null) {
                 if (nextNode.getExponente() == current.getExponente()) {// Determine si el índice es el mismo
                     current.setCoeficiente(current.getCoeficiente() + nextNode.getCoeficiente()); // Establecer el nuevo índice del coeficiente correspondiente	
 
                 }
 
-                nextNode = nextNode.siguiente;// Pasar el valor del siguiente nodo,
+                nextNode = nextNode.getSiguiente();// Pasar el valor del siguiente nodo,
             }
             // Eliminar elementos con un coeficiente de 0
             if (current.getCoeficiente() == 0) {
-                preCurrent.siguiente = current.siguiente;
+                preCurrent.setSiguiente(current.getSiguiente());
             }
             
-            current = current.siguiente;
+            current = current.getSiguiente();
 
         }
 
@@ -139,25 +137,25 @@ public class PolinomioList {
     }
     
     public static PolinomioList restar(PolinomioList a, PolinomioList b){
-        MoNodo anext=b.inicio.siguiente;
+        Nodo anext=b.primero;
         PolinomioList negativo=new PolinomioList();
         while(anext!=null){
             int coef=anext.getCoeficiente()*-1;
-            negativo.insertar(new MoNodo(coef,anext.getExponente()));
-            anext=anext.siguiente;
+            negativo.insertar(new Nodo(coef,anext.getExponente()));
+            anext=anext.getSiguiente();
         }
-        sumar(a,negativo);
         
-        return sumar(a,negativo);
+        
+        return a.sumar(negativo);
     }
     public PolinomioList escalar(int esca){
-        MoNodo anext=this.inicio.siguiente;
+        Nodo anext=this.primero;
         PolinomioList result=new PolinomioList();
         
        while(anext!=null){
             int coef=anext.getCoeficiente()*esca;
-            result.insertar(new MoNodo(coef,anext.getExponente()));
-            anext=anext.siguiente;
+            result.insertar(new Nodo(coef,anext.getExponente()));
+            anext=anext.getSiguiente();
         }
         
         return result;
